@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Posting Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --cream: #faf7f2;
+    --gold: #c9a84c;
+    --gold-light: #e8d18a;
+    --rust: #b84c2e;
+    --mid: #6b6560;
+    --line: #e0d9cf;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #e8e4de;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px 60px;
+  }
+
+  /* ── TOOLBAR ── */
+  #toolbar {
+    width: 100%;
+    max-width: 860px;
+    background: var(--ink);
+    border-radius: 14px 14px 0 0;
+    padding: 14px 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  #toolbar span {
+    color: #9e9990;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+  .tb-btn {
+    background: #1e1c19;
+    border: 1px solid #333;
+    color: #d4cfc8;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+  }
+  .tb-btn:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .tb-btn.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  #toolbar select {
+    background: #1e1c19;
+    border: 1px solid #333;
+    color: #d4cfc8;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+  }
+  .tb-sep { width: 1px; height: 24px; background: #333; margin: 0 4px; }
+  #save-btn {
+    margin-left: auto;
+    background: var(--rust);
+    border-color: var(--rust);
+    color: #fff;
+    font-weight: 600;
+  }
+  #save-btn:hover { background: #9a3e24; border-color: #9a3e24; color: #fff; }
+  #print-btn { color: #d4cfc8; }
+
+  /* ── PAPER ── */
+  #paper {
+    width: 100%;
+    max-width: 860px;
+    background: var(--cream);
+    box-shadow: 0 8px 60px rgba(0,0,0,.22), 0 2px 10px rgba(0,0,0,.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* decorative corner marks */
+  #paper::before, #paper::after {
+    content: '';
+    position: absolute;
+    width: 60px; height: 60px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: .35;
+  }
+  #paper::before { top: 18px; left: 18px; border-width: 2px 0 0 2px; }
+  #paper::after  { top: 18px; right: 18px; border-width: 2px 2px 0 0; }
+
+  /* ── HEADER BAND ── */
+  .header-band {
+    background: var(--ink);
+    padding: 48px 56px 38px;
+    position: relative;
+  }
+  .header-band::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--rust), var(--gold), var(--rust));
+  }
+
+  .company-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+  .logo-box {
+    width: 64px; height: 64px;
+    background: var(--gold);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--ink);
+    cursor: pointer;
+    transition: transform .15s;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .logo-box:hover { transform: scale(1.06); }
+  .logo-box input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .logo-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+  .company-info { flex: 1; }
+
+  [contenteditable] { outline: none; cursor: text; }
+  [contenteditable]:focus { background: rgba(201,168,76,.08); border-radius: 3px; }
+  [contenteditable]:hover:not(:focus) { background: rgba(255,255,255,.04); border-radius: 3px; }
+
+  .company-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    min-width: 40px;
+  }
+  .company-tagline {
+    font-size: 12px;
+    color: #807870;
+    letter-spacing: .06em;
+    margin-top: 3px;
+    display: block;
+  }
+
+  .job-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(30px, 5vw, 50px);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    min-width: 60px;
+    margin-bottom: 20px;
+  }
+
+  .meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chip {
+    border: 1px solid rgba(201,168,76,.4);
+    color: var(--gold-light);
+    font-size: 12px;
+    letter-spacing: .06em;
+    padding: 5px 14px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 20px;
+  }
+  .chip .icon { font-size: 11px; opacity: .7; }
+
+  /* ── BODY ── */
+  .body-wrap {
+    padding: 44px 56px 50px;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 44px;
+  }
+
+  /* section */
+  .section { margin-bottom: 34px; }
+  .section:last-child { margin-bottom: 0; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .body-text {
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #2e2b27;
+    min-height: 24px;
+  }
+
+  /* bullet list */
+  .editable-list { list-style: none; padding: 0; }
+  .editable-list li {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: #2e2b27;
+    padding: 4px 0 4px 22px;
+    position: relative;
+    min-height: 26px;
+  }
+  .editable-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 11px;
+    top: 6px;
+  }
+
+  /* add-row button */
+  .add-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--gold);
+    cursor: pointer;
+    padding: 4px 0;
+    margin-top: 6px;
+    opacity: .7;
+    transition: opacity .15s;
+    background: none; border: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-row:hover { opacity: 1; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { }
+
+  .sidebar-card {
+    background: #f2ede6;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+  .sidebar-card:last-child { margin-bottom: 0; }
+
+  .card-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 14px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .info-row:last-child { margin-bottom: 0; }
+  .info-icon {
+    font-size: 14px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+  .info-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--mid);
+    margin-bottom: 2px;
+  }
+  .info-value {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 20px;
+  }
+
+  /* salary highlight */
+  .salary-highlight {
+    background: var(--ink);
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .salary-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: #807870; margin-bottom: 6px; }
+  .salary-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 40px;
+    display: inline-block;
+  }
+  .salary-period { font-size: 11px; color: #807870; margin-top: 3px; }
+
+  /* apply btn */
+  .apply-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--rust);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s, transform .1s;
+    margin-bottom: 10px;
+  }
+  .apply-btn:hover { background: #9a3e24; transform: translateY(-1px); }
+
+  .apply-email {
+    font-size: 12px;
+    color: var(--mid);
+    text-align: center;
+    display: block;
+    min-width: 20px;
+  }
+
+  /* deadline */
+  .deadline-badge {
+    background: rgba(184,76,46,.1);
+    border: 1px solid rgba(184,76,46,.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .deadline-badge .icon { font-size: 16px; }
+  .deadline-text { font-size: 12px; color: var(--rust); font-weight: 500; min-width: 20px; }
+
+  /* ── FOOTER ── */
+  .footer-band {
+    border-top: 1px solid var(--line);
+    padding: 20px 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .footer-left { font-size: 12px; color: var(--mid); }
+  .footer-right { font-size: 12px; color: var(--mid); min-width: 20px; }
+  .footer-dots {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: .5; }
+  .dot:nth-child(2) { opacity: .3; }
+  .dot:nth-child(3) { opacity: .15; }
+
+  /* ── EDIT HINT ── */
+  .edit-hint {
+    text-align: center;
+    font-size: 11px;
+    color: #a09890;
+    margin-top: 14px;
+    letter-spacing: .06em;
+  }
+  .edit-hint kbd {
+    background: #d9d4cc;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 10px;
+    color: #555;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--gold);
+    font-size: 13px;
+    padding: 10px 22px;
+    border-radius: 100px;
+    border: 1px solid #333;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s, transform .3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── DELETE ITEM ── */
+  .del-li {
+    position: absolute;
+    right: -18px;
+    top: 6px;
+    font-size: 13px;
+    color: #ccc;
+    cursor: pointer;
+    display: none;
+    background: none; border: none;
+    font-family: sans-serif;
+    line-height: 1;
+  }
+  li:hover .del-li { display: block; }
+  li:hover .del-li:hover { color: var(--rust); }
+  li { position: relative; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; padding: 0; }
+    #toolbar, .edit-hint, #toast, .add-row, .del-li { display: none !important; }
+    #paper { box-shadow: none; max-width: 100%; border-radius: 0; }
+    #paper::before, #paper::after { display: none; }
+  }
+
+  @media (max-width: 640px) {
+    .header-band, .body-wrap, .footer-band { padding-left: 24px; padding-right: 24px; }
+    .body-wrap { grid-template-columns: 1fr; }
+    .sidebar { order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <span>Style:</span>
+  <button class="tb-btn active" onclick="setTheme('classic')">Classic</button>
+  <button class="tb-btn" onclick="setTheme('dark')">All Dark</button>
+  <button class="tb-btn" onclick="setTheme('minimal')">Minimal</button>
+  <div class="tb-sep"></div>
+  <span>Accent:</span>
+  <button class="tb-btn" style="background:#1a2e1a;border-color:#2a4d2a;color:#7ec87e" onclick="setAccent('#4caf7d','#81d4a0','#2d6a4a')">Green</button>
+  <button class="tb-btn" style="background:#1a1a2e;border-color:#2a2a4d;color:#8e8ed4" onclick="setAccent('#5c6bc0','#9fa8da','#3949ab')">Indigo</button>
+  <button class="tb-btn" style="background:#2e1a1a;border-color:#4d2a2a;color:#d48e8e" onclick="setAccent('#c9a84c','#e8d18a','#b84c2e')">Gold</button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn print-btn" onclick="window.print()">🖨 Print / PDF</button>
+  <button class="tb-btn" id="save-btn" onclick="saveHTML()">⬇ Download</button>
+</div>
+
+<!-- PAPER -->
+<div id="paper">
+
+  <!-- HEADER -->
+  <div class="header-band" id="header-band">
+
+    <div class="company-row">
+      <div class="logo-box" id="logo-box" title="Click to upload logo">
+        <span id="logo-letters">NX</span>
+        <input type="file" accept="image/*" onchange="uploadLogo(this)">
+      </div>
+      <div class="company-info">
+        <span class="company-name" contenteditable="true" spellcheck="false">NexaVentures Inc.</span>
+        <span class="company-tagline" contenteditable="true" spellcheck="false">Redefining what's possible, one hire at a time</span>
+      </div>
+    </div>
+
+    <div class="job-title" contenteditable="true" spellcheck="false">Senior Product Designer</div>
+
+    <div class="meta-chips">
+      <span class="chip"><span class="icon">📍</span><span contenteditable="true" spellcheck="false">San Francisco, CA</span></span>
+      <span class="chip"><span class="icon">⏱</span><span contenteditable="true" spellcheck="false">Full-Time</span></span>
+      <span class="chip"><span class="icon">🏢</span><span contenteditable="true" spellcheck="false">Hybrid · 3 days onsite</span></span>
+      <span class="chip"><span class="icon">🎓</span><span contenteditable="true" spellcheck="false">3+ Years Experience</span></span>
+    </div>
+
+  </div>
+
+  <!-- BODY -->
+  <div class="body-wrap">
+
+    <!-- MAIN COLUMN -->
+    <div class="main-col">
+
+      <!-- About the Role -->
+      <div class="section">
+        <div class="section-label">About the Role</div>
+        <div class="body-text" contenteditable="true" spellcheck="false">
+          We're looking for a <strong>Senior Product Designer</strong> to join our growing team at NexaVentures. In this role, you'll shape the way our users interact with cutting-edge tools used by over 2 million professionals worldwide. You'll work at the intersection of strategy, research, and craft — turning complex problems into elegant, intuitive experiences that people love.
+        </div>
+      </div>
+
+      <!-- Responsibilities -->
+      <div class="section">
+        <div class="section-label">What You'll Do</div>
+        <ul class="editable-list" id="resp-list">
+          <li><span contenteditable="true" spellcheck="false">Lead end-to-end design for core product features, from discovery through delivery</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Collaborate with Product, Engineering, and Data teams to define solutions that drive business outcomes</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Conduct user research, interviews, and usability tests to inform design decisions</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Maintain and evolve our design system, ensuring consistency across all touchpoints</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Mentor junior designers and help raise the bar for design quality across the org</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+        </ul>
+        <button class="add-row" onclick="addLi('resp-list')">＋ Add responsibility</button>
+      </div>
+
+      <!-- Requirements -->
+      <div class="section">
+        <div class="section-label">What We're Looking For</div>
+        <ul class="editable-list" id="req-list">
+          <li><span contenteditable="true" spellcheck="false">5+ years of product design experience at a technology company</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Mastery of Figma and a strong understanding of design systems</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Portfolio demonstrating complex problem-solving and high-quality visual craft</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Experience with user research methods and translating insights into design</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Excellent communication skills and comfort presenting to senior stakeholders</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+        </ul>
+        <button class="add-row" onclick="addLi('req-list')">＋ Add requirement</button>
+      </div>
+
+      <!-- Nice to Have -->
+      <div class="section">
+        <div class="section-label">Bonus Points</div>
+        <ul class="editable-list" id="bonus-list">
+          <li><span contenteditable="true" spellcheck="false">Experience designing for B2B SaaS or data-heavy products</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Familiarity with front-end development (HTML/CSS, React)</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Motion design or prototyping with advanced interactions</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+        </ul>
+        <button class="add-row" onclick="addLi('bonus-list')">＋ Add bonus</button>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <!-- Salary -->
+      <div class="sidebar-card">
+        <div class="salary-highlight">
+          <div class="salary-label">Annual Salary</div>
+          <div class="salary-value" contenteditable="true" spellcheck="false">$130K–$165K</div>
+          <div class="salary-period">+ equity + bonus</div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📅</div>
+          <div>
+            <div class="info-label">Start Date</div>
+            <div class="info-value" contenteditable="true" spellcheck="false">ASAP / Flexible</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">🌐</div>
+          <div>
+            <div class="info-label">Remote Policy</div>
+            <div class="info-value" contenteditable="true" spellcheck="false">Hybrid (US only)</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">🏦</div>
+          <div>
+            <div class="info-label">Department</div>
+            <div class="info-value" contenteditable="true" spellcheck="false">Product & Design</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">👤</div>
+          <div>
+            <div class="info-label">Reports To</div>
+            <div class="info-value" contenteditable="true" spellcheck="false">VP of Product</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perks -->
+      <div class="sidebar-card">
+        <div class="card-title">Perks & Benefits</div>
+        <ul class="editable-list" id="perks-list" style="padding-left:0">
+          <li><span contenteditable="true" spellcheck="false">100% medical, dental & vision</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Unlimited PTO + 12 paid holidays</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">$2,500 annual learning budget</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">401(k) with 4% company match</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+          <li><span contenteditable="true" spellcheck="false">Home office setup stipend</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button></li>
+        </ul>
+        <button class="add-row" onclick="addLi('perks-list')">＋ Add perk</button>
+      </div>
+
+      <!-- Apply -->
+      <div class="sidebar-card">
+        <div class="card-title">How to Apply</div>
+        <button class="apply-btn" contenteditable="true" spellcheck="false">Apply Now →</button>
+        <span class="apply-email" contenteditable="true" spellcheck="false">careers@nexaventures.com</span>
+        <br>
+        <div class="deadline-badge" style="margin-top:10px">
+          <span class="icon">⏰</span>
+          <span class="deadline-text" contenteditable="true" spellcheck="false">Deadline: July 31, 2026</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-band">
+    <div class="footer-left">
+      <span contenteditable="true" spellcheck="false">NexaVentures Inc. · nexaventures.com</span>
+    </div>
+    <div class="footer-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="footer-right" contenteditable="true" spellcheck="false">
+      Equal opportunity employer. We celebrate diversity.
+    </div>
+  </div>
+
+</div>
+
+<p class="edit-hint">✏️ Click any text to edit &nbsp;·&nbsp; Use toolbar for styles &nbsp;·&nbsp; <kbd>⬇ Download</kbd> to save your file</p>
+
+<div id="toast"></div>
+
+<script>
+// ── THEME ──
+function setTheme(t) {
+  const r = document.documentElement.style;
+  const hb = document.getElementById('header-band');
+  document.querySelectorAll('.tb-btn').forEach(b => {
+    if(b.textContent.trim()===({classic:'Classic',dark:'All Dark',minimal:'Minimal'}[t]||'')) b.classList.add('active');
+    else if(['Classic','All Dark','Minimal'].includes(b.textContent.trim())) b.classList.remove('active');
+  });
+  if(t==='classic'){
+    r.setProperty('--ink','#0f0e0c'); r.setProperty('--cream','#faf7f2');
+    r.setProperty('--line','#e0d9cf'); r.setProperty('--mid','#6b6560');
+    hb.style.background=''; document.getElementById('paper').style.background='';
+  } else if(t==='dark'){
+    r.setProperty('--ink','#0a0a0a'); r.setProperty('--cream','#161512');
+    r.setProperty('--line','#2a2722'); r.setProperty('--mid','#8a8480');
+    document.getElementById('paper').style.background='#161512';
+    document.querySelectorAll('.body-text,.editable-list li span,.info-value').forEach(el=>el.style.color='#d4cfc8');
+    document.querySelectorAll('.sidebar-card').forEach(c=>c.style.background='#1e1c19');
+  } else {
+    r.setProperty('--ink','#111'); r.setProperty('--cream','#ffffff');
+    r.setProperty('--line','#ebebeb'); r.setProperty('--mid','#888');
+    hb.style.background='#ffffff'; hb.style.borderBottom='3px solid #111';
+    document.querySelectorAll('.company-name').forEach(el=>el.style.color='#111');
+    document.querySelectorAll('.job-title').forEach(el=>el.style.color='#111');
+    document.querySelectorAll('.chip').forEach(el=>{el.style.borderColor='#ddd';el.style.color='#444';});
+  }
+}
+
+function setAccent(gold, goldLight, rust) {
+  document.documentElement.style.setProperty('--gold', gold);
+  document.documentElement.style.setProperty('--gold-light', goldLight);
+  document.documentElement.style.setProperty('--rust', rust);
+  toast('Accent color updated ✓');
+}
+
+// ── LIST UTILS ──
+function addLi(listId) {
+  const ul = document.getElementById(listId);
+  const li = document.createElement('li');
+  li.innerHTML = `<span contenteditable="true" spellcheck="false">New item — click to edit</span><button class="del-li" onclick="delLi(this)" title="Remove">✕</button>`;
+  ul.appendChild(li);
+  li.querySelector('span').focus();
+  const r = document.createRange(); const s = window.getSelection();
+  r.selectNodeContents(li.querySelector('span')); s.removeAllRanges(); s.addRange(r);
+}
+
+function delLi(btn) {
+  const li = btn.closest('li');
+  if(li.closest('ul').querySelectorAll('li').length > 1) li.remove();
+  else toast('Keep at least one item');
+}
+
+// ── LOGO UPLOAD ──
+function uploadLogo(input) {
+  if(!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const box = document.getElementById('logo-box');
+    box.querySelector('#logo-letters').style.display = 'none';
+    let img = box.querySelector('img');
+    if(!img){ img = document.createElement('img'); box.insertBefore(img, box.querySelector('input')); }
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── DOWNLOAD ──
+function saveHTML() {
+  const clone = document.documentElement.cloneNode(true);
+  // Remove all editing UI
+  clone.querySelectorAll('#toolbar,.edit-hint,#toast,.del-li,.add-row').forEach(el=>el.remove());
+  clone.querySelectorAll('input[type="file"]').forEach(el=>el.remove());
+  // Strip all contenteditable attributes → read-only
+  clone.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  // Remove hover/focus edit styles
+  const lockStyle = clone.ownerDocument.createElement('style');
+  lockStyle.textContent = `
+    * { cursor: default !important; user-select: text; }
+    [contenteditable]:focus, [contenteditable]:hover { background: none !important; }
+    .logo-box { pointer-events: none; }
+  `;
+  clone.querySelector('head').appendChild(lockStyle);
+  // Remove the entire script block (no JS needed in static file)
+  clone.querySelectorAll('script').forEach(el=>el.remove());
+  const blob = new Blob(['<!DOCTYPE html>'+clone.outerHTML], {type:'text/html'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'job-posting.html'; a.click();
+  toast('Downloaded as read-only ✓');
+}
+
+// ── LOGO AUTO-INITIALS ──
+document.querySelector('.company-name').addEventListener('input', function() {
+  const words = this.textContent.trim().split(/\s+/);
+  const initials = (words[0]?.[0]||'') + (words[1]?.[0]||words[0]?.[1]||'');
+  const ll = document.getElementById('logo-letters');
+  if(ll && ll.style.display !== 'none') ll.textContent = initials.toUpperCase().slice(0,2) || 'CO';
+});
+</script>
+</body>
+</html>
